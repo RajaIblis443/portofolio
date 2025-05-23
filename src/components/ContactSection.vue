@@ -45,7 +45,6 @@ const socialLinks = ref([
       </p>
     </div>
 
-    <!-- Social Media Links dengan efek hover yang lebih halus -->
     <div class="max-w-3xl mx-auto">
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
         <a 

@@ -127,20 +127,11 @@ const education = ref<Education[]>([
   }
 ]);
 
-// Tambahkan data aktivitas tambahan
 const activities = ref<Activity[]>([
-  {
-    description: 'Anggota tim pengembangan website sekolah',
-    icon: 'fas fa-globe'
-  },
   {
     description: 'Peserta aktif dalam kompetisi programming tingkat provinsi',
     icon: 'fas fa-trophy'
   },
-  {
-    description: 'Kontributor pada proyek open source lokal',
-    icon: 'fab fa-github'
-  }
 ]);
 
 const activeSection = ref('skills');
@@ -152,7 +143,6 @@ const viewCertificate = (cert: Certificate) => {
 
 const closeCertificateDetail = () => {
   showCertificateDetail.value = false;
-  // Delay untuk animasi keluar
   setTimeout(() => {
     selectedCertificate.value = null;
   }, 300);
@@ -160,301 +150,304 @@ const closeCertificateDetail = () => {
 </script>
 
 <template>
-  <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-0 overflow-y-auto">
-    <!-- Overlay -->
-    <div 
-      class="absolute inset-0 bg-black bg-opacity-75 transition-opacity" 
-      :class="{ 'opacity-100': modalActive, 'opacity-0': !modalActive }"
-      @click="emit('close')"
-    ></div>
-    
-    <!-- Modal Content -->
-    <div 
-      class="relative bg-gray-900 border border-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all"
-      :class="{ 'opacity-100 translate-y-0': modalActive, 'opacity-0 translate-y-4': !modalActive }"
-    >
-      <!-- Header with close button -->
-      <div class="flex justify-between items-center p-6 border-b border-gray-800">
-        <h2 class="text-2xl font-bold text-white">Informasi Lebih Lanjut</h2>
-        <button 
-          @click="emit('close')" 
-          class="text-gray-400 hover:text-white focus:outline-none"
-        >
-          <i class="fas fa-times text-xl"></i>
-        </button>
-      </div>
+  <!-- Gunakan Teleport untuk memindahkan modal ke #modal-container -->
+  <Teleport to="#modal-container">
+    <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-0 overflow-y-auto">
+      <!-- Overlay -->
+      <div 
+        class="absolute inset-0 bg-black bg-opacity-75 transition-opacity" 
+        :class="{ 'opacity-100': modalActive, 'opacity-0': !modalActive }"
+        @click="emit('close')"
+      ></div>
       
-      <!-- Navigation Tabs -->
-      <div class="flex border-b border-gray-800 bg-gray-800/50">
-        <button 
-          v-for="section in ['skills', 'education', 'certifications']" 
-          :key="section"
-          @click="activeSection = section" 
-          :class="[
-            'px-5 py-3 text-sm font-medium transition-all border-b-2 flex items-center',
-            activeSection === section 
-              ? 'border-yellow-500 text-yellow-400' 
-              : 'border-transparent text-gray-400 hover:text-white'
-          ]"
-        >
-          <i :class="[
-            section === 'skills' ? 'fas fa-brain' : 
-            section === 'education' ? 'fas fa-graduation-cap' : 
-            'fas fa-certificate',
-            'mr-2'
-          ]"></i>
-          {{ {
-            'skills': 'Keahlian Tambahan', 
-            'education': 'Pendidikan',
-            'certifications': 'Sertifikasi'
-          }[section] }}
-        </button>
-      </div>
-      
-      <!-- Modal Body with tab content -->
-      <div class="p-6">
-        <div v-show="activeSection === 'skills'">
-          <p class="text-gray-400 mb-6">
-            Selain kemampuan utama dalam bahasa pemrograman dan framework, saya juga memiliki keahlian dalam berbagai area berikut:
-          </p>
-          
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div 
-              v-for="(category, index) in additionalSkills" 
-              :key="`category-${index}`"
-              class="bg-gray-800 p-5 rounded-lg hover:bg-gray-700/50 transition-all"
-              data-aos="fade-up"
-              :data-aos-delay="index * 100"
-            >
-              <div class="flex items-center mb-4">
-                <div class="w-10 h-10 rounded-full bg-yellow-400/20 flex items-center justify-center mr-3">
-                  <i :class="[category.icon, 'text-yellow-400']"></i>
+      <!-- Modal Content -->
+      <div 
+        class="relative bg-gray-900 border border-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all"
+        :class="{ 'opacity-100 translate-y-0': modalActive, 'opacity-0 translate-y-4': !modalActive }"
+      >
+        <!-- Header with close button -->
+        <div class="flex justify-between items-center p-6 border-b border-gray-800">
+          <h2 class="text-2xl font-bold text-white">Informasi Lebih Lanjut</h2>
+          <button 
+            @click="emit('close')" 
+            class="text-gray-400 hover:text-white focus:outline-none"
+          >
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-gray-800 bg-gray-800/50">
+          <button 
+            v-for="section in ['skills', 'education', 'certifications']" 
+            :key="section"
+            @click="activeSection = section" 
+            :class="[
+              'px-5 py-3 text-sm font-medium transition-all border-b-2 flex items-center',
+              activeSection === section 
+                ? 'border-yellow-500 text-yellow-400' 
+                : 'border-transparent text-gray-400 hover:text-white'
+            ]"
+          >
+            <i :class="[
+              section === 'skills' ? 'fas fa-brain' : 
+              section === 'education' ? 'fas fa-graduation-cap' : 
+              'fas fa-certificate',
+              'mr-2'
+            ]"></i>
+            {{ {
+              'skills': 'Keahlian Tambahan', 
+              'education': 'Pendidikan',
+              'certifications': 'Sertifikasi'
+            }[section] }}
+          </button>
+        </div>
+        
+        <!-- Modal Body with tab content -->
+        <div class="p-6">
+          <div v-show="activeSection === 'skills'">
+            <p class="text-gray-400 mb-6">
+              Selain kemampuan utama dalam bahasa pemrograman dan framework, saya juga memiliki keahlian dalam berbagai area berikut:
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div 
+                v-for="(category, index) in additionalSkills" 
+                :key="`category-${index}`"
+                class="bg-gray-800 p-5 rounded-lg hover:bg-gray-700/50 transition-all"
+                data-aos="fade-up"
+                :data-aos-delay="index * 100"
+              >
+                <div class="flex items-center mb-4">
+                  <div class="w-10 h-10 rounded-full bg-yellow-400/20 flex items-center justify-center mr-3">
+                    <i :class="[category.icon, 'text-yellow-400']"></i>
+                  </div>
+                  <h3 class="text-lg font-semibold text-yellow-400">{{ category.category }}</h3>
                 </div>
-                <h3 class="text-lg font-semibold text-yellow-400">{{ category.category }}</h3>
+                <ul class="space-y-2">
+                  <li 
+                    v-for="(item, itemIndex) in category.items" 
+                    :key="`item-${itemIndex}`"
+                    class="flex items-center text-gray-300"
+                  >
+                    <span class="w-2 h-2 bg-yellow-500 rounded-full mr-3"></span>
+                    <span>{{ item }}</span>
+                  </li>
+                </ul>
               </div>
-              <ul class="space-y-2">
+            </div>
+          </div>
+          
+          <!-- Education Section -->
+          <div v-show="activeSection === 'education'">
+            <div 
+              v-for="(edu, index) in education" 
+              :key="`edu-${index}`"
+              class="mb-8 border-l-2 border-yellow-500 pl-6 py-2"
+            >
+              <div class="flex flex-wrap justify-between items-start mb-2">
+                <h3 class="text-xl font-semibold text-white flex items-center">
+                  <i class="fas fa-school text-yellow-400 mr-2"></i>
+                  {{ edu.school }}
+                </h3>
+                <span class="text-yellow-400 text-sm bg-yellow-400/10 px-3 py-1 rounded-full flex items-center">
+                  <i class="far fa-calendar-alt mr-1"></i>
+                  {{ edu.period }}
+                </span>
+              </div>
+              <p class="text-lg text-gray-300 mb-2">{{ edu.degree }}</p>
+              <p class="text-gray-400">{{ edu.description }}</p>
+            </div>
+            
+            <div class="mt-8 bg-gray-800 p-6 rounded-lg">
+              <h3 class="text-lg font-semibold text-yellow-400 mb-4 flex items-center">
+                <i class="fas fa-tasks text-yellow-400 mr-2"></i>
+                Kegiatan Tambahan
+              </h3>
+              <ul class="space-y-3">
                 <li 
-                  v-for="(item, itemIndex) in category.items" 
-                  :key="`item-${itemIndex}`"
-                  class="flex items-center text-gray-300"
+                  v-for="(activity, index) in activities" 
+                  :key="index"
+                  class="flex items-start"
                 >
-                  <span class="w-2 h-2 bg-yellow-500 rounded-full mr-3"></span>
-                  <span>{{ item }}</span>
+                  <div class="w-8 h-8 rounded-full bg-yellow-400/20 flex items-center justify-center mr-3 mt-0.5">
+                    <i :class="[activity.icon, 'text-yellow-400']"></i>
+                  </div>
+                  <p class="text-gray-300">{{ activity.description }}</p>
                 </li>
               </ul>
             </div>
           </div>
-        </div>
-        
-        <!-- Education Section -->
-        <div v-show="activeSection === 'education'">
-          <div 
-            v-for="(edu, index) in education" 
-            :key="`edu-${index}`"
-            class="mb-8 border-l-2 border-yellow-500 pl-6 py-2"
-          >
-            <div class="flex flex-wrap justify-between items-start mb-2">
-              <h3 class="text-xl font-semibold text-white flex items-center">
-                <i class="fas fa-school text-yellow-400 mr-2"></i>
-                {{ edu.school }}
-              </h3>
-              <span class="text-yellow-400 text-sm bg-yellow-400/10 px-3 py-1 rounded-full flex items-center">
-                <i class="far fa-calendar-alt mr-1"></i>
-                {{ edu.period }}
-              </span>
-            </div>
-            <p class="text-lg text-gray-300 mb-2">{{ edu.degree }}</p>
-            <p class="text-gray-400">{{ edu.description }}</p>
-          </div>
           
-          <div class="mt-8 bg-gray-800 p-6 rounded-lg">
-            <h3 class="text-lg font-semibold text-yellow-400 mb-4 flex items-center">
-              <i class="fas fa-tasks text-yellow-400 mr-2"></i>
-              Kegiatan Tambahan
-            </h3>
-            <ul class="space-y-3">
-              <li 
-                v-for="(activity, index) in activities" 
-                :key="index"
-                class="flex items-start"
+          <!-- Certifications Section -->
+          <div v-show="activeSection === 'certifications'">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div 
+                v-for="cert in certifications" 
+                :key="`cert-${cert.id}`"
+                class="bg-gray-800 p-5 rounded-lg border border-gray-700 hover:border-yellow-500 transition-all cursor-pointer"
+                @click="viewCertificate(cert)"
               >
-                <div class="w-8 h-8 rounded-full bg-yellow-400/20 flex items-center justify-center mr-3 mt-0.5">
-                  <i :class="[activity.icon, 'text-yellow-400']"></i>
+                <div class="flex items-center mb-3">
+                  <div class="w-10 h-10 rounded-full bg-yellow-400/20 flex items-center justify-center mr-3">
+                    <i class="fas fa-award text-yellow-400"></i>
+                  </div>
+                  <h3 class="text-lg font-semibold text-white">{{ cert.name }}</h3>
                 </div>
-                <p class="text-gray-300">{{ activity.description }}</p>
-              </li>
-            </ul>
-          </div>
-        </div>
-        
-        <!-- Certifications Section -->
-        <div v-show="activeSection === 'certifications'">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div 
-              v-for="cert in certifications" 
-              :key="`cert-${cert.id}`"
-              class="bg-gray-800 p-5 rounded-lg border border-gray-700 hover:border-yellow-500 transition-all cursor-pointer"
-              @click="viewCertificate(cert)"
-            >
-              <div class="flex items-center mb-3">
-                <div class="w-10 h-10 rounded-full bg-yellow-400/20 flex items-center justify-center mr-3">
-                  <i class="fas fa-award text-yellow-400"></i>
+                <div class="flex justify-between text-sm">
+                  <span class="text-gray-400 flex items-center">
+                    <i class="fas fa-building mr-1"></i>
+                    {{ cert.issuer }}
+                  </span>
+                  <span class="text-yellow-400 flex items-center">
+                    <i class="far fa-calendar mr-1"></i>
+                    {{ cert.date }}
+                  </span>
                 </div>
-                <h3 class="text-lg font-semibold text-white">{{ cert.name }}</h3>
-              </div>
-              <div class="flex justify-between text-sm">
-                <span class="text-gray-400 flex items-center">
-                  <i class="fas fa-building mr-1"></i>
-                  {{ cert.issuer }}
-                </span>
-                <span class="text-yellow-400 flex items-center">
-                  <i class="far fa-calendar mr-1"></i>
-                  {{ cert.date }}
-                </span>
-              </div>
-              <div class="mt-2 flex justify-end">
-                <span class="text-xs text-yellow-400 italic flex items-center">
-                  <i class="fas fa-eye mr-1"></i>
-                  Klik untuk lihat detail
-                </span>
+                <div class="mt-2 flex justify-end">
+                  <span class="text-xs text-yellow-400 italic flex items-center">
+                    <i class="fas fa-eye mr-1"></i>
+                    Klik untuk lihat detail
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      
-      <!-- Footer -->
-      <div class="p-6 border-t border-gray-800 flex justify-between items-center">
-        <p class="text-sm text-gray-400 flex items-center">
-          <i class="fas fa-lightbulb text-yellow-400 mr-2"></i>
-          Selalu belajar dan mengembangkan keterampilan baru
-        </p>
-        <button 
-          @click="emit('close')" 
-          class="px-4 py-2 bg-gray-800 text-white text-sm rounded hover:bg-gray-700 transition-all flex items-center"
-        >
-          <i class="fas fa-times-circle mr-1"></i>
-          Tutup
-        </button>
-      </div>
-    </div>
-    
-    <!-- Certificate Detail Modal -->
-    <div 
-      v-if="selectedCertificate" 
-      class="fixed inset-0 z-60 flex items-center justify-center p-4"
-    >
-      <div 
-        class="absolute inset-0 bg-black bg-opacity-90 transition-opacity"
-        :class="{ 'opacity-100': showCertificateDetail, 'opacity-0': !showCertificateDetail }"
-        @click="closeCertificateDetail"
-      ></div>
-      
-      <div 
-        class="relative bg-gray-900 border border-gray-800 rounded-lg max-w-5xl w-full max-h-[90vh] overflow-y-auto transform transition-all"
-        :class="{ 'opacity-100 scale-100': showCertificateDetail, 'opacity-0 scale-95': !showCertificateDetail }"
-      >
-        <div class="absolute top-4 right-4 z-10">
+        
+        <!-- Footer -->
+        <div class="p-6 border-t border-gray-800 flex justify-between items-center">
+          <p class="text-sm text-gray-400 flex items-center">
+            <i class="fas fa-lightbulb text-yellow-400 mr-2"></i>
+            Selalu belajar dan mengembangkan keterampilan baru
+          </p>
           <button 
-            @click="closeCertificateDetail" 
-            class="bg-gray-800 rounded-full p-2 text-white hover:bg-gray-700 transition-all"
+            @click="emit('close')" 
+            class="px-4 py-2 bg-gray-800 text-white text-sm rounded hover:bg-gray-700 transition-all flex items-center"
           >
-            <i class="fas fa-times"></i>
+            <i class="fas fa-times-circle mr-1"></i>
+            Tutup
           </button>
         </div>
+      </div>
+      
+      <!-- Certificate Detail Modal -->
+      <div 
+        v-if="selectedCertificate" 
+        class="fixed inset-0 z-60 flex items-center justify-center p-4"
+      >
+        <div 
+          class="absolute inset-0 bg-black bg-opacity-90 transition-opacity"
+          :class="{ 'opacity-100': showCertificateDetail, 'opacity-0': !showCertificateDetail }"
+          @click="closeCertificateDetail"
+        ></div>
         
-        <div class="flex flex-col md:flex-row">
-          <!-- PDF Viewer Section -->
-          <div class="md:w-2/3 bg-gray-800 p-2 md:p-4 h-[70vh]">
-            <!-- Embed PDF viewer -->
-            <object 
-              :data="selectedCertificate.pdfUrl" 
-              type="application/pdf" 
-              class="w-full h-full rounded border border-gray-700"
+        <div 
+          class="relative bg-gray-900 border border-gray-800 rounded-lg max-w-5xl w-full max-h-[90vh] overflow-y-auto transform transition-all"
+          :class="{ 'opacity-100 scale-100': showCertificateDetail, 'opacity-0 scale-95': !showCertificateDetail }"
+        >
+          <div class="absolute top-4 right-4 z-10">
+            <button 
+              @click="closeCertificateDetail" 
+              class="bg-gray-800 rounded-full p-2 text-white hover:bg-gray-700 transition-all"
             >
-              <div class="flex flex-col items-center justify-center h-full bg-gray-800 rounded p-6 text-center">
-                <p class="text-gray-400 mb-4">
-                  <i class="fas fa-exclamation-circle text-yellow-400 mr-2"></i>
-                  Browser Anda tidak mendukung tampilan PDF langsung.
-                </p>
-                <a 
-                  :href="selectedCertificate.pdfUrl" 
-                  target="_blank" 
-                  class="px-4 py-2 bg-yellow-500 text-gray-900 rounded-md text-sm font-medium hover:bg-yellow-400 transition-all flex items-center justify-center"
-                >
-                  <i class="fas fa-external-link-alt mr-2"></i>
-                  Buka PDF
-                </a>
-              </div>
-            </object>
+              <i class="fas fa-times"></i>
+            </button>
           </div>
           
-          <!-- Certificate Details -->
-          <div class="md:w-1/3 p-6">
-            <h3 class="text-xl font-bold text-white mb-2 flex items-center">
-              <i class="fas fa-certificate text-yellow-400 mr-2"></i>
-              {{ selectedCertificate.name }}
-            </h3>
-            <div class="mb-4">
-              <p class="text-yellow-400 text-sm flex items-center">
-                <i class="fas fa-building mr-2"></i>
-                {{ selectedCertificate.issuer }}
-              </p>
-              <p class="text-gray-400 text-sm flex items-center">
-                <i class="far fa-calendar-alt mr-2"></i>
-                {{ selectedCertificate.date }}
-              </p>
+          <div class="flex flex-col md:flex-row">
+            <!-- PDF Viewer Section -->
+            <div class="md:w-2/3 bg-gray-800 p-2 md:p-4 h-[70vh]">
+              <!-- Embed PDF viewer -->
+              <object 
+                :data="selectedCertificate.pdfUrl" 
+                type="application/pdf" 
+                class="w-full h-full rounded border border-gray-700"
+              >
+                <div class="flex flex-col items-center justify-center h-full bg-gray-800 rounded p-6 text-center">
+                  <p class="text-gray-400 mb-4">
+                    <i class="fas fa-exclamation-circle text-yellow-400 mr-2"></i>
+                    Browser Anda tidak mendukung tampilan PDF langsung.
+                  </p>
+                  <a 
+                    :href="selectedCertificate.pdfUrl" 
+                    target="_blank" 
+                    class="px-4 py-2 bg-yellow-500 text-gray-900 rounded-md text-sm font-medium hover:bg-yellow-400 transition-all flex items-center justify-center"
+                  >
+                    <i class="fas fa-external-link-alt mr-2"></i>
+                    Buka PDF
+                  </a>
+                </div>
+              </object>
             </div>
             
-            <div class="mb-4">
-              <h4 class="text-sm font-semibold text-gray-300 uppercase mb-2 flex items-center">
-                <i class="fas fa-info-circle mr-2"></i>
-                Deskripsi
-              </h4>
-              <p class="text-gray-400 text-sm">{{ selectedCertificate.description }}</p>
-            </div>
-            
-            <div>
-              <h4 class="text-sm font-semibold text-gray-300 uppercase mb-2 flex items-center">
-                <i class="fas fa-code mr-2"></i>
-                Skills
-              </h4>
-              <div class="flex flex-wrap gap-2">
-                <span 
-                  v-for="(skill, index) in selectedCertificate.skills" 
-                  :key="`skill-${index}`"
-                  class="text-xs px-2 py-1 rounded-full bg-gray-800 text-yellow-400 border border-yellow-500 flex items-center"
-                >
-                  <i class="fas fa-check-circle mr-1"></i>
-                  {{ skill }}
-                </span>
+            <!-- Certificate Details -->
+            <div class="md:w-1/3 p-6">
+              <h3 class="text-xl font-bold text-white mb-2 flex items-center">
+                <i class="fas fa-certificate text-yellow-400 mr-2"></i>
+                {{ selectedCertificate.name }}
+              </h3>
+              <div class="mb-4">
+                <p class="text-yellow-400 text-sm flex items-center">
+                  <i class="fas fa-building mr-2"></i>
+                  {{ selectedCertificate.issuer }}
+                </p>
+                <p class="text-gray-400 text-sm flex items-center">
+                  <i class="far fa-calendar-alt mr-2"></i>
+                  {{ selectedCertificate.date }}
+                </p>
               </div>
-            </div>
-            
-            <div class="mt-6 space-y-2">
-              <a 
-                :href="selectedCertificate.pdfUrl" 
-                download
-                class="w-full inline-block text-center px-4 py-2 bg-yellow-500 text-gray-900 rounded-md text-sm font-medium hover:bg-yellow-400 transition-all items-center justify-center"
-              >
-                <i class="fas fa-download mr-2"></i>
-                Download PDF
-              </a>
               
-              <a 
-                :href="selectedCertificate.pdfUrl" 
-                target="_blank"
-                class="w-full inline-block text-center px-4 py-2 border border-yellow-500 text-yellow-400 rounded-md text-sm font-medium hover:bg-yellow-400 hover:text-gray-900 transition-all items-center justify-center"
-              >
-                <i class="fas fa-external-link-alt mr-2"></i>
-                Buka di Tab Baru
-              </a>
+              <div class="mb-4">
+                <h4 class="text-sm font-semibold text-gray-300 uppercase mb-2 flex items-center">
+                  <i class="fas fa-info-circle mr-2"></i>
+                  Deskripsi
+                </h4>
+                <p class="text-gray-400 text-sm">{{ selectedCertificate.description }}</p>
+              </div>
+              
+              <div>
+                <h4 class="text-sm font-semibold text-gray-300 uppercase mb-2 flex items-center">
+                  <i class="fas fa-code mr-2"></i>
+                  Skills
+                </h4>
+                <div class="flex flex-wrap gap-2">
+                  <span 
+                    v-for="(skill, index) in selectedCertificate.skills" 
+                    :key="`skill-${index}`"
+                    class="text-xs px-2 py-1 rounded-full bg-gray-800 text-yellow-400 border border-yellow-500 flex items-center"
+                  >
+                    <i class="fas fa-check-circle mr-1"></i>
+                    {{ skill }}
+                  </span>
+                </div>
+              </div>
+              
+              <div class="mt-6 space-y-2">
+                <a 
+                  :href="selectedCertificate.pdfUrl" 
+                  download
+                  class="w-full inline-block text-center px-4 py-2 bg-yellow-500 text-gray-900 rounded-md text-sm font-medium hover:bg-yellow-400 transition-all items-center justify-center"
+                >
+                  <i class="fas fa-download mr-2"></i>
+                  Download PDF
+                </a>
+                
+                <a 
+                  :href="selectedCertificate.pdfUrl" 
+                  target="_blank"
+                  class="w-full inline-block text-center px-4 py-2 border border-yellow-500 text-yellow-400 rounded-md text-sm font-medium hover:bg-yellow-400 hover:text-gray-900 transition-all items-center justify-center"
+                >
+                  <i class="fas fa-external-link-alt mr-2"></i>
+                  Buka di Tab Baru
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <style scoped>

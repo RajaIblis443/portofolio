@@ -9,7 +9,6 @@ defineProps({
   }
 });
 
-// Data skills dan frameworks Anda (tetap sama)
 const skills = ref([
   { name: 'HTML & CSS', percentage: 90, type: 'Frontend' },
   { name: 'JavaScript', percentage: 85, type: 'Frontend' },
@@ -62,7 +61,6 @@ const toggleModal = () => {
         </div>
       </div>
       
-      <!-- Sisanya tetap sama seperti sebelumnya -->
       <div data-aos="fade-left" data-aos-delay="400" class="hidden lg:flex justify-center">
         <!-- Konten ilustrasi -->
         <div class="relative w-full">
