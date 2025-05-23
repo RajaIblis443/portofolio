@@ -40,6 +40,8 @@ const modalActive = ref(false);
 const selectedCertificate = ref<Certificate | null>(null);
 const showCertificateDetail = ref(false);
 
+const isPdfAvailable = ref(true);
+
 const handleEscKey = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
     if (showCertificateDetail.value) {
@@ -97,6 +99,15 @@ const certifications = ref<Certificate[]>([
     pdfUrl: '/certificates/sertifikat javscript.pdf',
     description: 'Sertifikasi yang mencakup konsep dasar dan lanjutan JavaScript untuk pengembangan web modern.',
     skills: ['JavaScript', 'Web Development', 'Frontend', 'ES6+']
+  },
+  {
+    id: 5,
+    name: 'Juara 3 IT Bussiness Solution',
+    issuer: 'Provinsi DIY',
+    date: '20 April 2025',
+    description: 'Sertifikat penghargaan sebagai juara 3 dalam kompetisi IT Bussiness Solution tingkat provinsi.',
+    skills: ['IT Bussiness', 'Laravel', 'API',],
+    pdfUrl: '/certificates/sertifikat juara 3 it bussiness solution.pdf'
   }
 ]);
 
@@ -136,9 +147,24 @@ const activities = ref<Activity[]>([
 
 const activeSection = ref('skills');
 
-const viewCertificate = (cert: Certificate) => {
+// Fungsi untuk memeriksa ketersediaan file
+const checkPdfAvailability = async (url: string): Promise<boolean> => {
+  try {
+    const response = await fetch(url, { method: 'HEAD' });
+    return response.ok;
+  } catch (error) {
+    console.error("Error checking file:", error);
+    return false;
+  }
+};
+
+// Modifikasi viewCertificate untuk mengecek ketersediaan PDF
+const viewCertificate = async (cert: Certificate) => {
   selectedCertificate.value = cert;
   showCertificateDetail.value = true;
+  
+  // Cek ketersediaan PDF
+  isPdfAvailable.value = await checkPdfAvailability(cert.pdfUrl);
 };
 
 const closeCertificateDetail = () => {
@@ -357,27 +383,49 @@ const closeCertificateDetail = () => {
           <div class="flex flex-col md:flex-row">
             <!-- PDF Viewer Section -->
             <div class="md:w-2/3 bg-gray-800 p-2 md:p-4 h-[70vh]">
-              <!-- Embed PDF viewer -->
-              <object 
-                :data="selectedCertificate.pdfUrl" 
-                type="application/pdf" 
-                class="w-full h-full rounded border border-gray-700"
-              >
+              <!-- PDF tersedia -->
+              <template v-if="isPdfAvailable">
+                <object 
+                  :data="selectedCertificate.pdfUrl" 
+                  type="application/pdf" 
+                  class="w-full h-full rounded border border-gray-700"
+                >
+                  <div class="flex flex-col items-center justify-center h-full bg-gray-800 rounded p-6 text-center">
+                    <p class="text-gray-400 mb-4">
+                      <i class="fas fa-exclamation-circle text-yellow-400 mr-2"></i>
+                      Browser Anda tidak mendukung tampilan PDF langsung.
+                    </p>
+                    <a 
+                      :href="selectedCertificate.pdfUrl" 
+                      target="_blank" 
+                      class="px-4 py-2 bg-yellow-500 text-gray-900 rounded-md text-sm font-medium hover:bg-yellow-400 transition-all flex items-center justify-center"
+                    >
+                      <i class="fas fa-external-link-alt mr-2"></i>
+                      Buka PDF
+                    </a>
+                  </div>
+                </object>
+              </template>
+              
+              <!-- PDF tidak tersedia -->
+              <template v-else>
                 <div class="flex flex-col items-center justify-center h-full bg-gray-800 rounded p-6 text-center">
-                  <p class="text-gray-400 mb-4">
-                    <i class="fas fa-exclamation-circle text-yellow-400 mr-2"></i>
-                    Browser Anda tidak mendukung tampilan PDF langsung.
+                  <div class="bg-gray-700 w-20 h-20 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-file-pdf text-yellow-400 text-3xl"></i>
+                  </div>
+                  <h3 class="text-xl font-semibold text-white mb-3">File Belum Tersedia</h3>
+                  <p class="text-gray-400 mb-6 max-w-md">
+                    Sertifikat ini belum memiliki file PDF yang tersedia. Silakan hubungi saya jika Anda ingin melihat bukti sertifikat.
                   </p>
-                  <a 
-                    :href="selectedCertificate.pdfUrl" 
-                    target="_blank" 
-                    class="px-4 py-2 bg-yellow-500 text-gray-900 rounded-md text-sm font-medium hover:bg-yellow-400 transition-all flex items-center justify-center"
+                  <button
+                    @click="isPdfAvailable = await checkPdfAvailability(selectedCertificate.pdfUrl)"
+                    class="px-4 py-2 bg-gray-700 text-white rounded-md text-sm font-medium hover:bg-gray-600 transition-all flex items-center justify-center"
                   >
-                    <i class="fas fa-external-link-alt mr-2"></i>
-                    Buka PDF
-                  </a>
+                    <i class="fas fa-sync-alt mr-2"></i>
+                    Coba Muat Ulang
+                  </button>
                 </div>
-              </object>
+              </template>
             </div>
             
             <!-- Certificate Details -->
@@ -423,7 +471,9 @@ const closeCertificateDetail = () => {
               </div>
               
               <div class="mt-6 space-y-2">
+                <!-- Download button - hanya ditampilkan jika PDF tersedia -->
                 <a 
+                  v-if="isPdfAvailable"
                   :href="selectedCertificate.pdfUrl" 
                   download
                   class="w-full inline-block text-center px-4 py-2 bg-yellow-500 text-gray-900 rounded-md text-sm font-medium hover:bg-yellow-400 transition-all items-center justify-center"
@@ -432,7 +482,9 @@ const closeCertificateDetail = () => {
                   Download PDF
                 </a>
                 
+                <!-- View button - hanya ditampilkan jika PDF tersedia -->
                 <a 
+                  v-if="isPdfAvailable"
                   :href="selectedCertificate.pdfUrl" 
                   target="_blank"
                   class="w-full inline-block text-center px-4 py-2 border border-yellow-500 text-yellow-400 rounded-md text-sm font-medium hover:bg-yellow-400 hover:text-gray-900 transition-all items-center justify-center"
@@ -440,6 +492,24 @@ const closeCertificateDetail = () => {
                   <i class="fas fa-external-link-alt mr-2"></i>
                   Buka di Tab Baru
                 </a>
+                
+                <!-- Pesan alternatif jika PDF tidak tersedia -->
+                <div 
+                  v-if="!isPdfAvailable" 
+                  class="p-4 bg-gray-800 rounded-md border border-gray-700"
+                >
+                  <div class="flex items-start">
+                    <i class="fas fa-info-circle text-yellow-400 mt-1 mr-3"></i>
+                    <div>
+                      <p class="text-white text-sm font-medium mb-1">
+                        File PDF tidak tersedia
+                      </p>
+                      <p class="text-gray-400 text-sm">
+                        Silakan hubungi saya melalui kontak yang tersedia untuk mendapatkan bukti sertifikat ini.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
