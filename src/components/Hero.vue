@@ -12,7 +12,7 @@ const props = defineProps({
   <section class="container mx-auto px-4 py-12 md:py-20">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
       <div>
-        <p class="text-lg mb-1 text-yellow-400">{{ profile.greeting }}</p>
+        <p class="text-lg mb-1 text-yellow-400">{{ props.profile.greeting }}</p>
         <h1 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">{{ profile.name }}</h1>
         <p class="text-xl text-gray-300 mb-6">{{ profile.title }}</p>
         
