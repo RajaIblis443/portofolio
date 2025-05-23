@@ -77,7 +77,6 @@ const footerSocials = computed(() => {
         <ul class="flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-500">
           <li><a href="#beranda" class="hover:text-white transition-colors">Beranda</a></li>
           <li><a href="#tentang" class="hover:text-white transition-colors">Tentang</a></li>
-          <li><a href="#proyek" class="hover:text-white transition-colors">Proyek</a></li>
           <li><a href="#kontak" class="hover:text-white transition-colors">Kontak</a></li>
         </ul>
       </div>
