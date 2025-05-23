@@ -40,7 +40,9 @@ const modalActive = ref(false);
 const selectedCertificate = ref<Certificate | null>(null);
 const showCertificateDetail = ref(false);
 
+// Tambahkan ref untuk status pemeriksaan
 const isPdfAvailable = ref(true);
+const isCheckingPdf = ref(false);
 
 const handleEscKey = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
@@ -107,7 +109,7 @@ const certifications = ref<Certificate[]>([
     date: '20 April 2025',
     description: 'Sertifikat penghargaan sebagai juara 3 dalam kompetisi IT Bussiness Solution tingkat provinsi.',
     skills: ['IT Bussiness', 'Laravel', 'API',],
-    pdfUrl: '/certificates/sertifikat juara 3 it bussiness solution.pdf'
+    pdfUrl: ''
   }
 ]);
 
@@ -124,7 +126,7 @@ const additionalSkills = ref<SkillCategory[]>([
   },
   { 
     category: 'Methodologies', 
-    items: ['Agile', 'Scrum', 'DevOps', 'CI/CD', 'Test-Driven Development'],
+    items: ['Agile', 'Test-Driven Development'],
     icon: 'fas fa-sitemap'
   }
 ]);
@@ -165,6 +167,20 @@ const viewCertificate = async (cert: Certificate) => {
   
   // Cek ketersediaan PDF
   isPdfAvailable.value = await checkPdfAvailability(cert.pdfUrl);
+};
+
+// Fungsi untuk memeriksa ulang ketersediaan PDF
+const reloadPdf = () => {
+  if (!selectedCertificate.value) return;
+  
+  isCheckingPdf.value = true;
+  checkPdfAvailability(selectedCertificate.value.pdfUrl)
+    .then(available => {
+      isPdfAvailable.value = available;
+    })
+    .finally(() => {
+      isCheckingPdf.value = false;
+    });
 };
 
 const closeCertificateDetail = () => {
@@ -417,13 +433,14 @@ const closeCertificateDetail = () => {
                   <p class="text-gray-400 mb-6 max-w-md">
                     Sertifikat ini belum memiliki file PDF yang tersedia. Silakan hubungi saya jika Anda ingin melihat bukti sertifikat.
                   </p>
-                  <button
-                    @click="isPdfAvailable = await checkPdfAvailability(selectedCertificate.pdfUrl)"
-                    class="px-4 py-2 bg-gray-700 text-white rounded-md text-sm font-medium hover:bg-gray-600 transition-all flex items-center justify-center"
-                  >
-                    <i class="fas fa-sync-alt mr-2"></i>
-                    Coba Muat Ulang
-                  </button>
+  <button
+    @click="reloadPdf()"
+  :disabled="isCheckingPdf"
+  class="px-4 py-2 bg-gray-700 text-white rounded-md text-sm font-medium hover:bg-gray-600 transition-all flex items-center justify-center"
+>
+  <i :class="[isCheckingPdf ? 'fas fa-spinner fa-spin' : 'fas fa-sync-alt', 'mr-2']"></i>
+  {{ isCheckingPdf ? 'Sedang memeriksa...' : 'Coba Muat Ulang' }}
+</button>
                 </div>
               </template>
             </div>
